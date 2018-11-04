@@ -1,8 +1,8 @@
 #include <Servo.h>
-Servo servo1; 
-Servo servo2;
-const int servo1Pin = 2;
-const int servo2Pin = 3;
+Servo servoTheta; 
+Servo servoPhi;
+const int servoThetaPin = 3;
+const int servoPhiPin = 2;
 const int laserPin = 4;
 const int phiMax = 170;
 
@@ -16,8 +16,8 @@ long duration, inches, cm;
 int theta = 0;
 int phi = 0;
 void setup() {
-  servo1.attach(servo1Pin);
-  servo2.attach(servo2Pin);
+  servoTheta.attach(servoThetaPin);
+  servoPhi.attach(servoPhiPin);
   pinMode(laserPin, OUTPUT);
   // pinMode(distSensorPin, INPUT);
   pinMode(trigPin, OUTPUT);
@@ -42,14 +42,14 @@ void testLaser(int laserPin){
   delay(100);
   }
 
-void test2Servos(Servo servo2, Servo servo1){
+void test2Servos(Servo servoPhi, Servo servoTheta){
   for(int i=0; i<180; i+=thetaStep){
     for(int j=0; j<phiMax; j+=thetaStep){
-      servo1.write(i);
-      servo2.write(j);
+      servoTheta.write(i);
+      servoPhi.write(j);
       Serial.println("\t Coordinates: (" + String(i) + ", " + String(j) + ")");
       Serial.println("\t \t Time: " + String(millis()));
-      testDistSensor();
+      getDistance();
       delay(1000);
       }
     }
@@ -58,10 +58,30 @@ void test2Servos(Servo servo2, Servo servo1){
 void setupDistSensor(int trigPin){
   pinMode(trigPin, OUTPUT);
 }
-void incrementTheta(){
+//  void incrementTheta(){
+//    if(){
+//      theta+= thetaStep;
+//      servoTheta.write(theta);
+//    }
   
+void move(int theta, int phi){
+  // theta: [0, 360] defined as angle in the horizontal plane
+  // phi: [0, 90] defined as angle to the vertical 
+  int offset = 90;
+  if(theta <180 && theta > 0){
+    servoTheta.write(theta);
+    servoPhi.write(phi+offset);
   }
-  
+  else if(theta>180 && theta < 360){
+    servoTheta.write(theta-180);
+    servoPhi.write(-phi+offset);
+    }
+  }
+//void moveTheta(int theta){
+//  if(servoTheta.read()>180){
+//    }
+//  servoTheta.write
+//  }
 long getDistance(){
   // Returns distance in centimeters
   digitalWrite(trigPin, LOW);
@@ -86,10 +106,73 @@ long microsecondsToCentimeters(long microseconds){
 float calcArea(float dist){
   return 0.5*dist*dist*dTheta;
   }
+int* genFlatPlaneX(){
+  //Only generates thetas
+  int numPoints = 360;
+  int constPhi = 90;
+  int planePoints[360];
+  for(int i=0; i<360; i++){
+      planePoints[i]= i; //Theta
+      //planePoints[i][1] = 90; //Phi
+      }
+  return planePoints;
+  }
   
+int* genFlatPlaneY(){
+  //Only generates phis
+  int numPoints = 360;
+  int constPhi = 90;
+  int planePoints[360];
+  for(int i=0; i<360; i++){
+      //planePoints[i][0]= i; //Theta
+      planePoints[i] = constPhi; //Phi
+      }
+  return planePoints;
+  }
+//int* genFlatPlane(){
+//    int numPoints = 360;
+//    int constPhi = 90;
+//    int planePoints[2][360];
+//    // Serial.println(String(planePoints))
+//    for(int i=0; i<360; i++){
+//      planePoints[i][0]= i; //Theta
+//      planePoints[i][1] = 90; //Phi
+//      }
+//    return planePoints; 
+//  }
 void loop() {
   // testLaser(laserPin);
   Serial.println("Time: " + String(millis()));
-  //testDistSensor();
-  test2Servos(servo1, servo2);
+  
+//  int *pointArrayX = genFlatPlaneX();
+//  int *pointArrayY = genFlatPlaneY();
+//
+//    int numPoints = 360;
+//    int constPhi = 90;
+//    int planePoints[2][360];
+//    // Serial.println(String(planePoints))
+//    for(int i=0; i<360; i++){
+//        planePoints[i][0]= i; //Theta
+//        planePoints[i][1] = 90; //Phi
+//        }
+//    return planePoints; 
+    
+  for(int i=0; i< 360; i++){
+      //int pt[] = {pointArrayX[i], pointArrayY[i]};
+      int pt[] = {i, 90};
+      Serial.println("\t Coordinates: (" + String(pt[0]) + ", " + String(pt[1]) + ")");
+      Serial.println("\t \t Time: " + String(millis()));
+      move(pt[0], pt[1]);
+      delay(50);
+    }
+//
+//  for(int i=0; i< sizeof(planePoints); i++){
+//      int pt[] = {pointArrayX[i], pointArrayY[i]};
+//      Serial.println("\t Coordinates: (" + String(pt[0]) + ", " + String(pt[1]) + ")");
+//      Serial.println("\t \t Time: " + String(millis()));
+//      move(pt[0], pt[1]);
+//      delay(50);
+//    }
+  // testDistSensor();
+  // test2Servos(servoTheta, servoPhi);
 }

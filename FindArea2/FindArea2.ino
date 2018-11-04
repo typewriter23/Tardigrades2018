@@ -99,7 +99,7 @@ long getDistance(){
   return dist;
   }
   
-long getDistance(float angleElev){
+float getDistance(float angleElev){
   // Returns distance in centimeters
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
@@ -112,7 +112,7 @@ long getDistance(float angleElev){
   return dist;
   }
 
-long getSampledDistance(){
+float getSampledDistance(){
   // Returns the median of a number of samples
   int numSamples = 10;
   int samples [numSamples];   // Heh, SAMples
@@ -129,7 +129,7 @@ long getSampledDistance(){
   return med;
   }
   
-long getSampledDistance(float angleElev){
+float getSampledDistance(float angleElev){
   // Returns the median of a number of samples
   int numSamples = 10;
   int samples [numSamples];   // Heh, SAMples
@@ -162,7 +162,7 @@ float calcArea(float dist, float dTheta){
 float getTotalArea(){
   //Sweeps over 360 degrees
   float totalArea = 0;
-  const float anglesOfElev[]= {0.0, 5.0, 10.0, 15.0};
+  const int anglesOfElev[]= {10, 15, 20, 25};
   for(int i=0; i< 360; i++){
       //int pt[] = {pointArrayX[i], pointArrayY[i]};
       for(int j=0; j<4; j++){
@@ -175,7 +175,7 @@ float getTotalArea(){
         totalArea += sectorArea/sizeof(anglesOfElev);
         Serial.println("\t Total area thus far at iteration  [" + String(i) + "]: " + String(totalArea) + " cm^2");
         Serial.println("j is " + String(j));
-        delay(10);
+        delay(5);
         }
     }
   Serial.println(String("Total Area: ") + String("totalArea"));

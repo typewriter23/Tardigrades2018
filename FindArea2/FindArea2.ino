@@ -162,10 +162,10 @@ float calcArea(float dist, float dTheta){
 float getTotalArea(){
   //Sweeps over 360 degrees
   float totalArea = 0;
-  float anglesOfElev[]= {0.0, 5.0, 10.0, 15.0};
+  const float anglesOfElev[]= {0.0, 5.0, 10.0, 15.0};
   for(int i=0; i< 360; i++){
       //int pt[] = {pointArrayX[i], pointArrayY[i]};
-      for(int j=0; j<sizeof(anglesOfElev); j++){
+      for(int j=0; j<4; j++){
         int pt[] = {i, 90-anglesOfElev[j]};
         move(pt[0], pt[1]);
         Serial.println("\t Coordinates: (" + String(pt[0]) + ", " + String(pt[1]) + ")");
@@ -174,7 +174,8 @@ float getTotalArea(){
         float sectorArea = calcArea(d, dTheta);
         totalArea += sectorArea/sizeof(anglesOfElev);
         Serial.println("\t Total area thus far at iteration  [" + String(i) + "]: " + String(totalArea) + " cm^2");
-        delay(50);
+        Serial.println("j is " + String(j));
+        delay(10);
         }
     }
   Serial.println(String("Total Area: ") + String("totalArea"));

@@ -17,6 +17,7 @@ const int thetaStep = 5;
 const float dTheta = 3.1415926/180;
 long duration, inches, cm;
 int theta = 0;
+int phiOffset = 85;
 int phi = 0;
 void setup() {
   servoTheta.attach(servoThetaPin);
@@ -70,14 +71,13 @@ void setupDistSensor(int trigPin){
 void move(int theta, int phi){
   // theta: [0, 360] defined as angle in the horizontal plane
   // phi: [0, 90] defined as angle to the vertical 
-  int offset = 90;
   if(theta <180 && theta > 0){
     servoTheta.write(theta);
-    servoPhi.write(phi+offset);
+    servoPhi.write(phi+phiOffset);
   }
   else if(theta>180 && theta < 360){
     servoTheta.write(theta-180);
-    servoPhi.write(-phi+offset);
+    servoPhi.write(-phi+phiOffset);
     }
   }
   
@@ -162,11 +162,11 @@ float calcArea(float dist, float dTheta){
 float getTotalArea(){
   //Sweeps over 360 degrees
   float totalArea = 0;
-  const int anglesOfElev[]= {10, 15, 20, 25};
+  const int anglesOfElev[]= {0, 5, 10, 15};
   for(int i=0; i< 360; i++){
       //int pt[] = {pointArrayX[i], pointArrayY[i]};
       for(int j=0; j<4; j++){
-        int pt[] = {i, 90-anglesOfElev[j]};
+        int pt[] = {i, phiOffset-anglesOfElev[j]};
         move(pt[0], pt[1]);
         Serial.println("\t Coordinates: (" + String(pt[0]) + ", " + String(pt[1]) + ")");
         Serial.println("\t \t Time: " + String(millis()));
